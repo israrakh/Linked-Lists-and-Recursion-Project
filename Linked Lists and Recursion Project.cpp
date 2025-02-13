@@ -1,4 +1,4 @@
-// Singly Linked List Implementation
+// Singly Linked List & Recursion Implementation
 
 #include <iostream>
 using namespace std;
@@ -15,10 +15,20 @@ public:
 };
 
 class SinglyLinkedList {
-protected:
+private:
 	Node* head;
 	Node* tail;
 	int count;
+
+	//Helper function to print list in reverse using recursion
+	void reversePrintHelper(Node* node) {
+		if (node == nullptr) {
+			cout << "nullptr";
+			return;
+		}
+		reversePrintHelper(node->next);
+		cout << " <- " << node->data;
+	}
 
 public:
 	SinglyLinkedList() {
@@ -40,47 +50,10 @@ public:
 		count++;
 	}
 	
-	//Deleting the first node
-	void deleteFirst() {
-		if (!head) {
-			cout << "List is empty!" << endl;
-			return;
-		}
-
-		Node* temp = head;
-		head = head->next;
-		if (!head) {
-			tail = nullptr;
-		}
-		delete temp;
-		count--;
-	}
-
-	//Deleting the last node
-	void deleteLast() {
-		if (!head) {
-			cout << "List is empty!" << endl;
-			return;
-		}
-		if (!head->next) {
-			delete head;
-			head = tail = nullptr;
-		}
-		else {
-			Node* temp = head;
-			while (temp->next != tail) {
-				temp = temp->next;
-			}
-			delete tail;
-			tail = temp;
-			tail->next = nullptr;
-		}
-		count--;
-	}
 
 	//Displaying the linked list
-	void display(const string& listName) {
-		cout << listName << " (" << count << "): ";
+	void display() {
+		cout << "Original list:\nHead -> ";
 		Node* temp = head;
 		while (temp) {
 			cout << temp->data << " -> ";
@@ -89,66 +62,28 @@ public:
 		cout << "nullptr" << endl;
 	}
 
-	//Get the head of the list
-	Node* getHead() {
-		return head;
-	}
-
-	//Getting the count of nodes
-	int getCount() {
-		return count;
-	}
-
-	//Clear the list
-	void clearList() {
-		while (head) {
-			deleteFirst();
-		}
-	}
-};
-
-//Deriving class for splitting the list
-class SplitLinkedList : public SinglyLinkedList {
-public:
-	void splitEvenAndOdd(SinglyLinkedList& evensList, SinglyLinkedList& oddsList) {
-		Node* temp = head;
-		while (temp) {
-			if (temp->data % 2 == 0) {
-				evensList.insertAtEnd(temp->data);
-			}
-			else {
-				oddsList.insertAtEnd(temp->data);
-			}
-			temp = temp->next;
-		}
-		clearList();
+	//Function to initiate reverse print
+	void reversePrint() {
+		cout << "Reverse list:" << endl;
+		reversePrintHelper(head);
+		cout << " <- Head" << endl;
 	}
 };
 
 
 //Main Program for testing
 int main() {
-	SplitLinkedList list;
-	SinglyLinkedList evensList, oddsList;
-
-	cout << "Enter integers ending with -999:\n";
-	int num;
-	while (cin >> num && num != -999) {
-		list.insertAtEnd(num);
+	SinglyLinkedList list;
+	
+	for (int i = 5; i <= 50; i += 5) {
+		list.insertAtEnd(i);
 	}
 
-	//Displaying the original list
-	list.display("List");
+	list.display();
 
-	//Splitting the list into evens and odds
-	list.splitEvenAndOdd(evensList, oddsList);
+	//Display in reverse
+	list.reversePrint();
 
-	//Displaying the resulting lists
-	evensList.display("evensList");
-	oddsList.display("oddsList");
-
-	//Displaying the cleared original list
-	list.display("List");
 
 	return 0;
 }
