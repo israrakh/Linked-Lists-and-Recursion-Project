@@ -15,34 +15,29 @@ public:
 };
 
 class SinglyLinkedList {
-private:
+protected:
 	Node* head;
+	Node* tail;
+	int count;
 
 public:
 	SinglyLinkedList() {
 		head = nullptr;
-	}
-
-	// Inserting at the beginning:
-	void insertAtBeginning(int data) {
-		Node* newNode = new Node(data);
-		newNode->next = head;
-		head = newNode;
+		tail = nullptr;
+		count = 0;
 	}
 
 	//Inserting at the end
 	void insertAtEnd(int data) {
 		Node* newNode = new Node(data);
 		if (!head) {
-			head = newNode;
-			return;
+			head = tail = newNode;
 		}
-
-		Node* temp = head;
-		while (temp->next) {
-			temp = temp->next;
+		else {
+			tail->next = newNode;
+			tail = newNode;
 		}
-		temp->next = newNode;
+		count++;
 	}
 	
 	//Deleting the first node
@@ -54,7 +49,11 @@ public:
 
 		Node* temp = head;
 		head = head->next;
+		if (!head) {
+			tail = nullptr;
+		}
 		delete temp;
+		count--;
 	}
 
 	//Deleting the last node
@@ -65,44 +64,23 @@ public:
 		}
 		if (!head->next) {
 			delete head;
-			head = nullptr;
-			return;
+			head = tail = nullptr;
 		}
-
-		Node* temp = head;
-		while (temp->next->next) {
-			temp = temp->next;
-		}
-		delete temp->next;
-		temp->next = nullptr;
-	}
-
-	//Deleting a specific node by value
-	void deleteValue(int value) {
-		if (!head) {
-			cout << "List is empty!" << endl;
-			return;
-		}
-		if (head->data == value) {
+		else {
 			Node* temp = head;
-			head = head->next;
-			delete temp;
-			return;
+			while (temp->next != tail) {
+				temp = temp->next;
+			}
+			delete tail;
+			tail = temp;
+			tail->next = nullptr;
 		}
-		
-		Node* temp = head;
-		while (temp->next && temp->next->data != value) {
-			temp = temp->next;
-		}
-		if (temp->next) {
-			Node* nodeToBeDelete = temp->next;
-			temp->next = temp->next->next;
-			delete nodeToBeDelete;
-		}
+		count--;
 	}
 
 	//Displaying the linked list
-	void display() {
+	void display(const string& listName) {
+		cout << listName << " (" << count << "): ";
 		Node* temp = head;
 		while (temp) {
 			cout << temp->data << " -> ";
@@ -110,53 +88,67 @@ public:
 		}
 		cout << "nullptr" << endl;
 	}
+
+	//Get the head of the list
+	Node* getHead() {
+		return head;
+	}
+
+	//Getting the count of nodes
+	int getCount() {
+		return count;
+	}
+
+	//Clear the list
+	void clearList() {
+		while (head) {
+			deleteFirst();
+		}
+	}
 };
+
+//Deriving class for splitting the list
+class SplitLinkedList : public SinglyLinkedList {
+public:
+	void splitEvenAndOdd(SinglyLinkedList& evensList, SinglyLinkedList& oddsList) {
+		Node* temp = head;
+		while (temp) {
+			if (temp->data % 2 == 0) {
+				evensList.insertAtEnd(temp->data);
+			}
+			else {
+				oddsList.insertAtEnd(temp->data);
+			}
+			temp = temp->next;
+		}
+		clearList();
+	}
+};
+
 
 //Main Program for testing
 int main() {
-	SinglyLinkedList sList;
+	SplitLinkedList list;
+	SinglyLinkedList evensList, oddsList;
 
-	cout << "Build a forward list" << endl;
-	sList.insertAtBeginning(50);
-	sList.insertAtBeginning(40);
-	sList.insertAtBeginning(30);
-	sList.insertAtBeginning(20);
-	sList.insertAtBeginning(10);
-	sList.display();
+	cout << "Enter integers ending with -999:\n";
+	int num;
+	while (cin >> num && num != -999) {
+		list.insertAtEnd(num);
+	}
 
-	cout << "\nDelete the first node" << endl;
-	sList.deleteFirst();
-	sList.display();
+	//Displaying the original list
+	list.display("List");
 
-	cout << "\nDelete the last node" << endl;
-	sList.deleteLast();
-	sList.display();
+	//Splitting the list into evens and odds
+	list.splitEvenAndOdd(evensList, oddsList);
 
-	cout << "\nDelete the middle node (30)" << endl;
-	sList.deleteValue(30);
-	sList.display();
+	//Displaying the resulting lists
+	evensList.display("evensList");
+	oddsList.display("oddsList");
 
-	cout << "\nBuild a backward list" << endl;
-	SinglyLinkedList sListBackward;
-	sListBackward.insertAtBeginning(10);
-	sListBackward.insertAtBeginning(20);
-	sListBackward.insertAtBeginning(30);
-	sListBackward.insertAtBeginning(40);
-	sListBackward.insertAtBeginning(50);
-	sListBackward.display();
-
-	cout << "\nDelete the first node" << endl;
-	sListBackward.deleteFirst();
-	sListBackward.display();
-
-	cout << "\nDelete the last node" << endl;
-	sListBackward.deleteLast();
-	sListBackward.display();
-
-	cout << "\nDelete the middle node" << endl;
-	sListBackward.deleteValue(30);
-	sListBackward.display();
-
+	//Displaying the cleared original list
+	list.display("List");
 
 	return 0;
 }
