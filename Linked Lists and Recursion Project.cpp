@@ -117,11 +117,11 @@ int main() {
 	SinglyLinkedList sList;
 
 	cout << "Build a forward list" << endl;
-	sList.insertAtBeginning(50);
-	sList.insertAtBeginning(40);
-	sList.insertAtBeginning(30);
-	sList.insertAtBeginning(20);
-	sList.insertAtBeginning(10);
+	sList.insertAtEnd(50);
+	sList.insertAtEnd(40);
+	sList.insertAtEnd(30);
+	sList.insertAtEnd(20);
+	sList.insertAtEnd(10);
 	sList.display();
 
 	cout << "\nDelete the first node" << endl;
