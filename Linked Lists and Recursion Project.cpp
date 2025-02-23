@@ -1,4 +1,4 @@
-// Singly Linked List Implementation
+// Singly Linked List Implementation: Split Evens/Odds
 
 #include <iostream>
 using namespace std;
@@ -89,9 +89,29 @@ public:
 		cout << "nullptr" << endl;
 	}
 
+	//Set the head of the list
+	void setHead(Node* newHead) {
+		head = newHead;
+	}
+
 	//Get the head of the list
 	Node* getHead() {
 		return head;
+	}
+
+	//Set the tail
+	void setTail(Node* newTail) {
+		tail = newTail;
+	}
+
+	//Getter for tail
+	Node* getTail() {
+		return tail;
+	}
+
+	//Set the count of the list
+	void setCount(int nCount) {
+		count = nCount;
 	}
 
 	//Getting the count of nodes
@@ -102,8 +122,12 @@ public:
 	//Clear the list
 	void clearList() {
 		while (head) {
-			deleteFirst();
+			Node* temp = head;
+			head = head->next;
+			delete temp;
 		}
+		tail = nullptr;
+		count = 0;
 	}
 };
 
@@ -111,17 +135,55 @@ public:
 class SplitLinkedList : public SinglyLinkedList {
 public:
 	void splitEvenAndOdd(SinglyLinkedList& evensList, SinglyLinkedList& oddsList) {
-		Node* temp = head;
-		while (temp) {
-			if (temp->data % 2 == 0) {
-				evensList.insertAtEnd(temp->data);
+		Node* current = head;
+		Node* evenTail = nullptr; //For tracking the last node of evens list
+		Node* oddTail = nullptr; //For tracking the last node of odds list
+		int evenCount = 0, oddCount = 0; //Tracking count separately
+
+		while (current) {
+
+			Node* nextNode = current->next; //Store next node before detaching
+
+			if (current->data % 2 == 0) {
+				if (!evensList.getHead()) {
+					evensList.setHead(current); //First node for evensList
+					evenTail = current; //Sets the tail for evensList
+				}
+				else {
+					evenTail->next = current; //This link to the last node
+					evenTail = current; //It moves the tail to current node
+				}
+				evenCount++;
 			}
 			else {
-				oddsList.insertAtEnd(temp->data);
+				if (!oddsList.getHead()) {
+					oddsList.setHead(current); //First node for oddsList
+					oddTail = current; //Sets the tail for oddList
+				}
+				else {
+					oddTail->next = current; //Link the last node
+					oddTail = current; //Move the tail to the current node
+				}
+				oddCount++;
 			}
-			temp = temp->next;
+			current->next = nullptr;
+			current = nextNode;
 		}
-		clearList();
+
+		//Checking for last nodes next pointers are null
+		if (evenTail) { 
+			evensList.setTail(evenTail);
+		}
+		if (oddTail) {
+			oddsList.setTail(oddTail);
+		}
+
+		evensList.setCount(evenCount);
+		oddsList.setCount(oddCount);
+
+		//Clearing the list after splitting
+		head = tail = nullptr;
+		count = 0;
 	}
 };
 
