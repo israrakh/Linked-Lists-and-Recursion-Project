@@ -145,25 +145,23 @@ public:
 			Node* nextNode = current->next; //Store next node before detaching
 
 			if (current->data % 2 == 0) {
-				if (!evensList.getHead()) {
-					evensList.setHead(current); //First node for evensList
-					evenTail = current; //Sets the tail for evensList
+				if (evenTail) {
+					evenTail->next = current; //Append to evensList
 				}
 				else {
-					evenTail->next = current; //This link to the last node
-					evenTail = current; //It moves the tail to current node
+					evensList.setHead(current); //First even node
 				}
+				evenTail = current;
 				evenCount++;
 			}
 			else {
-				if (!oddsList.getHead()) {
-					oddsList.setHead(current); //First node for oddsList
-					oddTail = current; //Sets the tail for oddList
+				if (oddTail) {
+					oddTail->next = current; //Append to the oddsList
 				}
 				else {
-					oddTail->next = current; //Link the last node
-					oddTail = current; //Move the tail to the current node
+					oddsList.setHead(current); //First odd node
 				}
+				oddTail = current;
 				oddCount++;
 			}
 			current->next = nullptr;
@@ -172,11 +170,13 @@ public:
 
 		//Checking for last nodes next pointers are null
 		if (evenTail) { 
-			evensList.setTail(evenTail);
+			evenTail->next = nullptr;
 		}
 		if (oddTail) {
-			oddsList.setTail(oddTail);
+			oddTail->next = nullptr;
 		}
+		evensList.setTail(evenTail);
+		oddsList.setTail(oddTail);
 
 		evensList.setCount(evenCount);
 		oddsList.setCount(oddCount);
