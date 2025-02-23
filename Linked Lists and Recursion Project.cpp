@@ -212,5 +212,6 @@ int main() {
 	//Displaying the cleared original list
 	list.display("List");
 
+
 	return 0;
 }
